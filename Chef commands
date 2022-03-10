@@ -1,1 +1,46 @@
 
+                                                          #Configuration Management Tool
+
+                                    #Components
+  a.Chef Workstation.   b. Chef-Server.   c.Node.   d.Ohai   e.Chef-Client
+  
+Installing Chef:-
+
+yum update -y
+wget https://packages.chef.io/files/stable/chef-workstation/20.7.96/el/7/chef-workstation-20.7.96-1.el7.x86_64.rpm
+ls
+yum install <chef-workstation url> -y
+which chef
+chef --version
+
+                            #Cookbook
+ a.chefignore  b.kitchen.yml  c.Metadata.rb  d.Readme.md  e.Recipe  f.spec  g.Test
+ 
+ Procedure:-
+ 
+ which chef
+ mkdir cookbooks
+ ls
+ cd cookbooks/
+ chef generate cookbook test-cookbook
+ yum install tree -y
+ tree
+ cd test-cookbook/
+ chef generate recipe <recipe name>
+ cd ..
+ vi  test-cookbook/recipes/test-recipe.rb
+ 
+ // Ruby code written as recipe which needs to be executed
+ 
+    file '/myfile' do
+    content 'practicing chef using ruby'
+    action  :create
+    end
+    
+// Chef command to check whether above mentioned code is syntactically correct or not.
+
+chef spec ruby -c test-cookbook/recipes/test-recipe.rb
+
+
+//To run the Recipe
+chef-client -zr "recipe[test-cookbook::test-recipe]"
