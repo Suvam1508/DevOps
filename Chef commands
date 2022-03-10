@@ -41,6 +41,138 @@ chef --version
 
 chef spec ruby -c test-cookbook/recipes/test-recipe.rb
 
-
 //To run the Recipe
 chef-client -zr "recipe[test-cookbook::test-recipe]"
+
+// Creating another recipe
+cd test-cookbook
+chef generate recipe recipe2
+cd ..
+vi test-cookbook/recipes/recipe2.rb
+  
+  //intalling tree package inside recipe
+  package 'tree' do
+  action  :install
+  end
+  
+  file '/myfile2' do
+  content 'Second Project Code'
+  action :create
+  owner  :root
+  group  :root
+  end
+  
+chef-client -zr "recipe[test-cookbook::recipe2]
+cat /myfile2
+
+
+                Deploying on Apache Server
+ ls
+ chef generate cookbook apache-cookbook
+ cd apache-cookbook/
+ chef generate recipe apache-recipe
+ tree
+ cd ..
+ ls
+ vi apache-cookbook/recipes/apache-recipe.rb
+ 
+      package "httpd" do
+      action  :install
+      end
+      
+      file '/var/www/html/index.html' do
+      content 'Hello Everyone'
+      action :create
+      end
+      
+      service "httpd" do
+      action [:enable, :start]
+      end
+      
+chef exec ruby -c apache-cookbook/recipes/apache-recipe.rb
+chef-client -zr "recipe[apache-cookbook::apache-recipe]"
+
+                                            Chef Attribute(Key-Value Analogy)
+                                            
+ #Procedure:-
+ 
+ ohai
+ ohai ipaddress
+ ohai cpu/0/mhz
+ ls
+ cd cookbooks/
+ ls
+ cd apache-cookbook/
+ tree
+ chef generate recipe recipe3
+ cd ..
+ vi apache-cookbook/recipes/recipe 3.rb
+ 
+        file '/basicinfo' do
+        content "This is to get Attributes
+        HOSTNAME:  #{node['hostname']}
+        IPADDRESS: #{node['ipaddress']}
+        CPU:  #{node['CPU']['0']['mhz']}
+        MEMORY: #{node['memory']['total']}"
+        
+        owner 'root'
+        group 'root'
+        action :create
+        end
+        
+chef-client -zr "recipe[apache-cookbook::recipe 3]"
+ls /
+cat /basicinfo
+ 
+                                   How to Create Linux Commands,User,Group in Ruby Code
+
+cd cookbooks/
+ls
+cd test-cookbook/
+vi test-cookbook/recipes/test-recipes.rb
+
+      execute "run a script" do
+        command<<-EOH
+        mkdir /suvam
+        touch /testfile
+        EOH
+     end
+chef-client -zr "recipe[test-cookbook::test-recipes]"
+ls /
+
+vi test-cookbook/recipes/test-recipes.rb
+
+      user "raj" do
+      action :create
+      end
+      
+chef-client -zr "recipe[test-cookbook::test-recipes]"
+
+vi test-cookbook/recipes/test-recipes.rb
+
+          group "devOpsgroup"  do                                 //no space in between
+          action  :create
+          members 'chatterjee'
+          append true
+          end
+          
+chef-client -zr "recipe[test-cookbook::test-recipes]"
+
+                                                                Runlist And Include_recipe
+                                                                
+// To run the recipe in a sequence order that we mention in a run list. With this process we can run multiple recipes, but condition is there must be only one recipe from 
+one cookbbok.
+
+#Syntax
+
+chef-client -zr "recipe[test-cookbook::test-recipe],recipe[apache-cookbook::apache-recipe]"
+
+                                #How to include_recipe( that is including all recipes into a single recipe of the same cookbbok and then running similar types using runlist)
+                                
+vi test-ccokbbok/recipes/default.rb
+
+      include_recipe "test-cookbook::test-recipe"
+      include_recipe "test-cookbook::recipe 2"
+      
+chef-client -zr "recipe[test-cookbook::default]"
+
